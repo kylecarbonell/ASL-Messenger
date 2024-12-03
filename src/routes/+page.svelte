@@ -173,7 +173,7 @@
     {/if}
 
     {#if sending}
-        <span>Sending</span>
+        <span>SENDING</span>
     {/if}
     
 </div>
