@@ -1,1 +1,5 @@
 backend/data
+
+node_modules
+
+.svelte-kit
