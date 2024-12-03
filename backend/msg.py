@@ -34,8 +34,12 @@ def message(message, sid):
     file_name = message.get("fileName", "unnamed.mp4")
     buffer = message["buffer"]
 
-    file_path = os.path.join("./ASL Videos", file_name)
-    with open(file_path, "wb") as f:
+    file_path = os.path.join("./ASL Videos")
+
+    if not os.path.exists(file_path):
+        os.mkdir(file_path)
+
+    with open(os.path.join(file_path, file_name), "wb") as f:
         f.write(buffer)
 
     word = extract_frames("./ASL Videos/test.mp4")
