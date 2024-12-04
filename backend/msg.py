@@ -30,7 +30,7 @@ Sends back the full word from the video back to the client
 '''
 @socketio.on("message")
 def message(message, sid):
-    print(sid)
+    # print(sid)
     file_name = message.get("fileName", "unnamed.mp4")
     buffer = message["buffer"]
 
