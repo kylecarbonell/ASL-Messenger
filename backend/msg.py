@@ -43,7 +43,7 @@ def message(message, sid):
         f.write(buffer)
 
     word = extract_frames("./ASL Videos/test.mp4")
-   
+    #print(word)
     if os.path.exists("./ASL Videos/test.mp4"):
         os.remove("./ASL Videos/test.mp4")
     else:
