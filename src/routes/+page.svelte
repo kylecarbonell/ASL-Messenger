@@ -24,7 +24,11 @@
     let mediaRecorder : MediaRecorder;
     let sending = false
 
+    let speed = 24
+    let brightness = 75
+
     $: recording = false
+    $: console.log(speed)
 
     onMount(() => {
 
@@ -48,20 +52,32 @@
             sending = false
         });
 
+
+        socket.on('textMessage', (newMessage:string, sender: string) => {
+            let m : Message = {
+				sender: sender,
+				message: newMessage
+			}
+            messages = [...messages, m]
+            console.log("IN MESSAGE")
+            console.log(messages)
+            sending = false
+        });
+
         return () => {
             socket.disconnect();
         };
     })
 
     function onSubmit(e : any){
-        socket.emit("message", e.target.value, socket.id)
+        socket.emit("textMessage", e.target.value, socket.id)
         let m : Message = {
             sender : socket.id,
             message : e.target.value,
         }
 
-        console.log(m.message)
-        messages = [...messages, m]
+        // console.log(m.message)
+        // messages = [...messages, m]
     }
     
     async function getCam(){
@@ -87,12 +103,24 @@
        
 
         console.log(stream);
-        recording = true;
+        
         const options = { mimeType: "video/mp4; codecs=vp9" };
         mediaRecorder = new MediaRecorder(stream, options);
 
         mediaRecorder.ondataavailable = handleDataAvailable;
         mediaRecorder.start();
+
+        
+        mediaRecorder.onstart = handleStart;
+        mediaRecorder.onstop = handleEnd;
+    }
+
+    function handleStart(){
+        recording = true
+    }
+
+    function handleEnd(){
+        recording = false
     }
     
     async function stopRecord(){
@@ -105,12 +133,12 @@
         if (event.data.size > 0) {
             recordedChunks.push(event.data);
             console.log(recordedChunks);
-            download();
+            sendData();
             recordedChunks.pop()
         }
     }
 
-    function download() {
+    function sendData() {
         const blob = new Blob(recordedChunks, {
             type: "video/mp4",
         });
@@ -129,28 +157,67 @@
             console.log("File sent to server");
             
             sending = true
-            socket.emit("message", fileData, socket.id);
+            socket.emit("message", fileData, socket.id, speed);
             
         }).catch((err) => {
             console.log(err)
         });
-
-
     }
 
 </script>
-
-<div>
+<!-- style="height:100%;background-color:green" -->
+<div class="Container">
     <h1>ASL Messenger</h1>
-    <h1>hi</h1>
+
+    <div class="Messages">
+        <ul>
+        {#each messages as message}
+            <li style={message.sender === socket.id ? "background-color: white" : "background-color: yellow"}>
+                {message.sender} : {message.message}
+            </li>
+        {/each}
+        </ul>
+    </div>
+
     
-    <ul>
-       {#each messages as message}
-        <li style={message.sender === socket.id ? "background-color: blue" : "background-color: green"}>
-            {message.sender} : {message.message}
-        </li>
-       {/each}
-    </ul>
+
+    <div>
+        <video  style="filter: brightness({brightness}%);"   bind:this={videoSource}  />
+        <button on:click={async () => {
+            recordVideo()
+        }}>RECORD</button>
+        <button on:click={async () => {
+            stopRecord()
+        }}>STOP</button>
+
+        {#if recording}
+            <span>RECORDING</span>
+        {/if}
+
+        {#if sending}
+            <span>SENDING</span>
+        {/if}
+        <label>Signing speed: </label>
+        <select name="speeds" id="speeds"  on:change={(e) => {
+            speed = e.target.value
+            
+        }}>
+            <option value={36}>Slow</option>
+            <option value={24} selected={true}>Medium</option>
+            <option value={12}>Fast</option>
+        </select>
+        <label>Brightness: </label>
+        <select name="brightness" id="brightness" on:change={(e) => {
+            brightness = e.target.value
+            
+        }}>
+            <option value={25}>Dark</option>
+            <option value={50}>Dim</option>
+            <option value={75} selected={true}>Bright</option>
+            <option value={100}>Brightest</option>
+        </select>
+
+    </div>
 
     <input type="text" on:keyup={(e) => {
         if(e.code == "Enter"){
@@ -159,26 +226,15 @@
         }
         
     }}/>
-
-    <video bind:this={videoSource}  />
-    <button on:click={async () => {
-        recordVideo()
-    }}>RECORD</button>
-    <button on:click={async () => {
-        stopRecord()
-    }}>STOP</button>
-
-    {#if recording}
-        <span>RECORDING</span>
-    {/if}
-
-    {#if sending}
-        <span>SENDING</span>
-    {/if}
     
 </div>
 
 <style>
+    html, body {
+        height: 100%;
+        padding:0;
+    }
+
     li{
         list-style-type: none;
         border : 1px black solid;
@@ -186,6 +242,25 @@
     }
 
     video{
+        width: 50%;
+        height: 50%;
         transform: scaleX(-1);
+        
+
+    }
+
+    .Messages{
+        width: 100%;
+        height: 50%;
+        background-color: black;
+    }
+
+    .Container{
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+
+        padding: 0;
     }
 </style>
