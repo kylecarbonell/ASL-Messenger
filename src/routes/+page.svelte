@@ -4,8 +4,6 @@
     import "../app.css";
     // import ffmpeg from 'fluent-ffmpeg';
 
-
-
     interface Message {
         sender: String;
         message : String
@@ -163,40 +161,75 @@
             console.log(err)
         });
     }
-
 </script>
 <!-- style="height:100%;background-color:green" -->
 <div class="Container">
+    <title>ASL Messenger</title>
     <h1>ASL Messenger</h1>
 
-    <div class="Messages">
-        <ul>
-        {#each messages as message}
-            <li style={message.sender === socket.id ? "background-color: white" : "background-color: yellow"}>
-                {message.sender} : {message.message}
-            </li>
-        {/each}
-        </ul>
+    <div class="header">
+        <nav>
+            <img src="src/lib/assets/sign-language-asl.png" class="logo"/>
+            <ul>
+                <li><img src="src/lib/assets/home.png" ></li>
+                <li><img src="src/lib/assets/video-chat.png" class="active"></li>
+                <!-- <li><img src="src/lib/assets/chat.png"></li> -->
+                <li><img src="src/lib/assets/user-guide.png"></li>
+                <!-- <li><img src="src/lib/assets/settings.png"></li> -->
+            </ul>
+        </nav>
+        <div class="container">
+            <div class="top-icons">
+                <img src="src/lib/assets/settings.png">
+            </div>
+            <div class="rows">
+                
+            </div>
+            <div class="row-1">
+                <div class="col-1">
+                    <div class="video-player">
+                        <video style="filter: brightness({brightness}%);" bind:this={videoSource} class="video" />
+                        <div class="controls">
+                            <img src="src/lib/assets/rec.png" class="record-button" on:click={async () => {
+                                recordVideo()
+                            }}>
+                            <img src="src/lib/assets/right-arrow.png" on:click={async () => {
+                                stopRecord()
+                            }}>
+                            <!-- <img src="src/lib/assets/stop.png" on:click={async () => {
+                                stopRecord()
+                            }}> -->
+                        </div>
+                    </div>
+                </div>
+                <div class="col-2">
+                    <div class="Messages">
+                        <h2>Chat</h2>
+                        <ul class="message">
+                        {#each messages as message}
+                            <li style={message.sender === socket.id ? "background-color: white" : "background-color: yellow"}>
+                                {message.sender} : {message.message}
+                            </li>
+                        {/each}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="row-2">
+                {#if recording}
+                    <div class="blinking-text">RECORDING</div>  
+                {/if}
+
+                {#if sending}
+                    <div class="sending">SENDING</div>
+                {/if}
+            </div>
+        </div>
     </div>
 
     
 
     <div>
-        <video  style="filter: brightness({brightness}%);"   bind:this={videoSource}  />
-        <button on:click={async () => {
-            recordVideo()
-        }}>RECORD</button>
-        <button on:click={async () => {
-            stopRecord()
-        }}>STOP</button>
-
-        {#if recording}
-            <span>RECORDING</span>
-        {/if}
-
-        {#if sending}
-            <span>SENDING</span>
-        {/if}
         <label>Signing speed: </label>
         <select name="speeds" id="speeds"  on:change={(e) => {
             speed = e.target.value
@@ -232,27 +265,60 @@
 <style>
     html, body {
         height: 100%;
-        padding:0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Poppins', sans-serif;
     }
 
     li{
         list-style-type: none;
-        border : 1px black solid;
         border-radius: 5px;
     }
 
-    video{
-        width: 50%;
-        height: 50%;
+    .video{
+        width: 100%;
+        border-radius: 15px;
         transform: scaleX(-1);
-        
+        /* box-shadow: 1px 1px 25px grey; */
+    }
 
+    .controls{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .controls img{
+        width: 40px;
+        margin: 5px 10px;
+        filter: invert(100%);
+        cursor: pointer;
+        transition: transform 0.5s;
+    }
+
+    .controls .record-button{
+        width: 80px;
+    }
+
+    .controls img:hover{
+        transform: translateY(-10px)
     }
 
     .Messages{
-        width: 100%;
-        height: 50%;
-        background-color: black;
+        width: 80%;
+        height: 85%;
+        background: #182842;
+        border-radius: 15px;
+        padding: 40px;
+    }
+
+    .Messages .message{
+        padding: 0;
+        left: 0;
+    }
+
+    .Messages h2{
+        color: white; 
     }
 
     .Container{
@@ -262,5 +328,143 @@
         flex-direction: column;
 
         padding: 0;
+    }
+
+    .header{
+        width: 100%;
+        height: 100vh;
+        background: #00122e;
+        position: relative;
+    }
+
+    nav{
+        position: absolute;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        background: #182842;
+        width: 100px;
+        padding: 10px 10px;
+    }
+
+    nav .logo{
+        width: 66px;
+        display: block;
+        margin: auto;
+        cursor: pointer;
+        filter: invert(100%);
+        border-radius: 10px;
+    }
+
+    nav ul{
+        left: 0;
+        margin-top: 160px;
+        padding: 0;
+    }
+
+    nav ul li{
+        list-style: none;
+        margin: 10px;
+    }
+
+    nav ul li img{
+        width: 30px;
+        height: 30px;
+        object-fit: cover;
+        display: block;
+        margin: 5px auto;
+        padding: 10px;
+        cursor: pointer;
+        filter: invert(100%);
+        border-radius: 10px;
+        opacity: 0.5;
+        transition: opacity 0.5s, background 0.5s;
+    }
+
+    nav ul li img:hover{
+        opacity: 1;
+        background: #b19e7d; 
+
+    }
+
+    .active{
+        opacity: 1;
+        background: #b19e7d; 
+    }
+
+    .container{
+        margin-left: 100px;
+        padding: 0 2.5%;
+    }
+
+    .top-icons{
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding: 25px 0;
+    }
+
+    .top-icons img{
+        width: 30px;
+        cursor: pointer;
+        filter: invert(100%);
+    }
+
+    .row-1{
+        margin-top: 15px;
+        display: flex;
+    }
+
+    .row-2{
+        margin-left: 20%;
+        display: flex;
+    }
+
+    .col-1{
+        flex-basis: 50%;
+        margin-left: auto;
+
+        /* padding: 20px; */
+        /* display: flex; */
+        align-items: center;
+        justify-content: center;
+        margin-right: 20px;
+    }
+
+    .col-2{
+        flex-basis: 48%; 
+    }
+
+    @keyframes blink {
+        0% {
+            opacity: 1;
+        }
+
+        50% {
+            opacity: 0;
+        }
+
+        100% {
+            opacity: 1;
+        }
+    }
+
+    .blinking-text {
+        text-align: center;
+        /* margin-top: 5%; */
+        font-size: 24px;
+        color: #4D6080;
+        animation: blink 1s infinite;
+    }
+
+    .sending{
+        text-align: center;
+        /* margin-top: 5%; */
+        font-size: 24px;
+        color: #4D6080;
+    }
+
+    .recordButton{
+        color:red;
     }
 </style>
