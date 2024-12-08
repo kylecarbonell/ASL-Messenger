@@ -198,7 +198,9 @@ def extract_frames(video_path, frame_rate=12):
                 if temp.multi_hand_landmarks:
                     # cv2.imwrite(f"./ASL Videos/good/{max_index}____{max_blurscore}.jpg", clear_image)
                     letter = predict_letter(temp)
-                    if(letter != "Unknown"):
+                    if(letter == "space"):
+                        word.append(" ")
+                    elif(letter != "Unknown"):
                         word.append(letter)
                     max_blurscore = 0
                     clear_image = 0
