@@ -121,7 +121,7 @@ def predict_letter(res):
                5:'F', 6: 'G', 7:'H', 8:'I', 9:'J',
                10: 'K', 11: 'L', 12: 'M', 13: 'N', 14: 'O',
                15:'P', 16:'Q', 17: 'R', 18:'S', 19:'T', 20:'U', 21:'V',
-               22:'W', 23:'X',24:'Y', 25:'Z'}  
+               22:'W', 23:'X',24:'Y', 25:'Z', 26: 'del', 27:'unknown', 28: 'space'} 
     
     for hand_landmarks in res.multi_hand_landmarks:
         for i in range(len(hand_landmarks.landmark)):
@@ -184,7 +184,7 @@ def extract_frames(video_path, frame_rate=12):
             blur_score, img = get_hand(image, results, count)
 
             print(count, blur_score)
-            # cv2.imwrite(f"./ASL Videos/all/hand{count}.jpg", img)
+            cv2.imwrite(f"./ASL Videos/all/hand{count}.jpg", img)
 
             if blur_score > max_blurscore and blur_score > 200:
                 max_blurscore = blur_score
@@ -196,7 +196,7 @@ def extract_frames(video_path, frame_rate=12):
             if count % frame_rate == 0:
                 temp = hands.process(clear_image)
                 if temp.multi_hand_landmarks:
-                    # cv2.imwrite(f"./ASL Videos/good/{max_index}____{max_blurscore}.jpg", clear_image)
+                    cv2.imwrite(f"./ASL Videos/good/{max_index}____{max_blurscore}.jpg", clear_image)
                     letter = predict_letter(temp)
                     if(letter == "space"):
                         word.append(" ")
