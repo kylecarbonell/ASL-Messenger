@@ -10,10 +10,8 @@ from tensorflow.keras.layers import Dropout
 from tensorflow.keras.regularizers import l2
 
 from tensorflow.keras.models import load_model
+from sklearn.preprocessing import LabelEncoder
 
-
-
-# Load the data from the pickle file
 with open('data.pickle', 'rb') as f:
     data_dict = pickle.load(f)
 
@@ -32,7 +30,6 @@ data = data.reshape(-1, 21, 2, 1)
 
 print(f"Reshaped data shape: {data.shape}")
 
-from sklearn.preprocessing import LabelEncoder
 label_encoder = LabelEncoder()
 labels_encoded = label_encoder.fit_transform(labels)
 
@@ -44,14 +41,12 @@ print(f"x_train shape: {x_train.shape}")
 print(f"x_test shape: {x_test.shape}")
 print(f"y_train shape: {y_train.shape}")
 print(f"y_test shape: {y_test.shape}")
+
 model = load_model('asl.h5')
-
-
-# hist = model.fit(x_train, y_train, epochs=150, batch_size=32, validation_data=(x_test, y_test))
 
 test_loss, test_acc = model.evaluate(x_test, y_test, verbose=2)
 train_loss, train_acc = model.evaluate(x_train, y_train, verbose=2)
-# model.save('asl.h5')  
+
 print(f"Test accuracy: {test_acc}")
 print(f"Test Loss: {test_loss}")
 

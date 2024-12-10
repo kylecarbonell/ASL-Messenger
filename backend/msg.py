@@ -94,16 +94,7 @@ def get_hand(image, results, count):
         y_max = min(h, y_max + padding)
 
         hand_image = image[y_min:y_max, x_min:x_max]
-        # gray = cv2.cvtColor(hand_image, cv2.COLOR_BGR2GRAY)
-        # equalized_image = cv2.equalizeHist(gray)
-
-        # print(avg_brightness)
-
         blur = getBlur(image)
-
-    # cv2.imwrite(f"./ASL Videos/all/equal{count}.jpg", equalized_image)
-    # cv2.imwrite(f"./ASL Videos/all/norm{count}.jpg", gray)
-        # return blur, hand_image
 
     return blur, image
 

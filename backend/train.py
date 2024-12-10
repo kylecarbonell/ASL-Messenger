@@ -8,9 +8,9 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.layers import Dropout
 from tensorflow.keras.regularizers import l2
+from sklearn.preprocessing import LabelEncoder
 
 
-# Load the data from the pickle file
 with open('data.pickle', 'rb') as f:
     data_dict = pickle.load(f)
 
@@ -29,18 +29,12 @@ data = data.reshape(-1, 21, 2, 1)
 
 print(f"Reshaped data shape: {data.shape}")
 
-from sklearn.preprocessing import LabelEncoder
 label_encoder = LabelEncoder()
 labels_encoded = label_encoder.fit_transform(labels)
 
 labels_encoded = to_categorical(labels_encoded)
 
 x_train, x_test, y_train, y_test = train_test_split(data, labels_encoded, test_size=0.2, shuffle=True, stratify=labels_encoded)
-
-print(f"x_train shape: {x_train.shape}")
-print(f"x_test shape: {x_test.shape}")
-print(f"y_train shape: {y_train.shape}")
-print(f"y_test shape: {y_test.shape}")
 
 model = Sequential()
 
@@ -53,9 +47,6 @@ model.add(Flatten())
 model.add(Dense(128, activation='relu'))
 model.add(Dense(y_train.shape[1], activation='softmax'))  
 
-# model.add(Dense(128, activation='relu', kernel_regularizer=l2(0.01)))
-
-
 model.compile(optimizer=Adam(), loss='categorical_crossentropy', metrics=['accuracy'])
 model.summary()
 
@@ -64,12 +55,6 @@ hist = model.fit(x_train, y_train, epochs=150, batch_size=32, validation_data=(x
 test_loss, test_acc = model.evaluate(x_test, y_test, verbose=2)
 train_loss, train_acc = model.evaluate(x_train, y_train, verbose=2)
 model.save('asl.h5')  
-print(f"Test accuracy: {test_acc}")
-print(f"Test Loss: {test_loss}")
-
-print(f"train accuracy: {train_acc}")
-print(f"train Loss: {train_loss}")
-
 
 fig = plt.figure()
 plt.plot(hist.history['loss'], color='teal', label='loss')
