@@ -161,6 +161,24 @@
             console.log(err)
         });
     }
+
+    function openSettings() {
+        document.getElementById("settingsSidenav").style.width = "250px";
+    }
+
+    function closeSettings() {
+        document.getElementById("settingsSidenav").style.width = "0";
+    }
+
+    function openKey() {
+        document.getElementById("keySidenav").style.width = "500px";
+    }
+
+    function closeKey() {
+        document.getElementById("keySidenav").style.width = "0";
+    }
+
+
 </script>
 <!-- style="height:100%;background-color:green" -->
 <div class="Container">
@@ -168,23 +186,56 @@
     <h1>ASL Messenger</h1>
 
     <div class="header">
-        <nav>
-            <img src="src/lib/assets/sign-language-asl.png" class="logo"/>
+        <nav class="nav-buttons">
+            <img src="src/lib/assets/sign-language-asl.png" class="highlight logo"/>
             <ul>
-                <li><img src="src/lib/assets/home.png" ></li>
-                <li><img src="src/lib/assets/video-chat.png" class="active"></li>
-                <!-- <li><img src="src/lib/assets/chat.png"></li> -->
-                <li><img src="src/lib/assets/user-guide.png"></li>
-                <!-- <li><img src="src/lib/assets/settings.png"></li> -->
+                <li><img src="src/lib/assets/home.png" class="highlight home"></li>
+                <li><img src="src/lib/assets/video-chat.png" class="highlight active"></li>
+                <li>
+                    <div id="keySidenav" class="key sidenav">
+
+                        <a href="javascript:void(0)" class="closebtn" on:click={closeKey}>&times;</a>
+                        <h3>ASL Alphabet</h3>
+                            <img src="src/lib/assets/asl-key.png" class="asl-key">
+                    </div>
+                    <img src="src/lib/assets/user-guide.png" class="highlight alphabet" on:click={openKey}>
+                </li>
+                
             </ul>
         </nav>
+
         <div class="container">
-            <div class="top-icons">
-                <img src="src/lib/assets/settings.png">
+            <div id="settingsSidenav" class="sidenav">
+                <a href="javascript:void(0)" class="closebtn" on:click={closeSettings}>&times;</a>
+                <h3>Settings</h3>
+                <div class="options">
+                    <div class="speed">
+                        <label>Signing speed: </label>
+                        <select name="speeds" id="speeds"  on:change={(e) => {
+                            speed = e.target.value
+                            
+                        }}>
+                            <option value={36}>Slow</option>
+                            <option value={24} selected={true}>Medium</option>
+                            <option value={12}>Fast</option>
+                        </select>
+                    </div>
+                    <div class="brightness">
+                        <label>Brightness: </label>
+                        <select name="brightness" id="brightness" on:change={(e) => {
+                            brightness = e.target.value
+                            
+                        }}>
+                            <option value={25}>Dark</option>
+                            <option value={50}>Dim</option>
+                            <option value={75} selected={true}>Bright</option>
+                            <option value={100}>Brightest</option>
+                        </select>
+                    </div>
+                </div>
             </div>
-            <div class="rows">
-                
-            </div>
+            <span class="settings-button" on:click={openSettings}>&#9776;</span>
+
             <div class="row-1">
                 <div class="col-1">
                     <div class="video-player">
@@ -196,9 +247,6 @@
                             <img src="src/lib/assets/right-arrow.png" on:click={async () => {
                                 stopRecord()
                             }}>
-                            <!-- <img src="src/lib/assets/stop.png" on:click={async () => {
-                                stopRecord()
-                            }}> -->
                         </div>
                     </div>
                 </div>
@@ -227,38 +275,13 @@
         </div>
     </div>
 
-    
-
-    <div>
-        <label>Signing speed: </label>
-        <select name="speeds" id="speeds"  on:change={(e) => {
-            speed = e.target.value
-            
-        }}>
-            <option value={36}>Slow</option>
-            <option value={24} selected={true}>Medium</option>
-            <option value={12}>Fast</option>
-        </select>
-        <label>Brightness: </label>
-        <select name="brightness" id="brightness" on:change={(e) => {
-            brightness = e.target.value
-            
-        }}>
-            <option value={25}>Dark</option>
-            <option value={50}>Dim</option>
-            <option value={75} selected={true}>Bright</option>
-            <option value={100}>Brightest</option>
-        </select>
-
-    </div>
-
-    <input type="text" on:keyup={(e) => {
+    <!-- <input type="text" on:keyup={(e) => {
         if(e.code == "Enter"){
             onSubmit(e)
             e.target.value = ""
         }
         
-    }}/>
+    }}/> -->
     
 </div>
 
@@ -279,16 +302,16 @@
         width: 100%;
         border-radius: 15px;
         transform: scaleX(-1);
-        /* box-shadow: 1px 1px 25px grey; */
+        box-shadow: rgba(0, 0, 0, 0.2) 0px 20px 30px;    
     }
 
-    .controls{
+    .controls {
         display: flex;
         align-items: center;
         justify-content: center;
     }
 
-    .controls img{
+    .controls img {
         width: 40px;
         margin: 5px 10px;
         filter: invert(100%);
@@ -296,48 +319,53 @@
         transition: transform 0.5s;
     }
 
-    .controls .record-button{
-        width: 80px;
-    }
-
-    .controls img:hover{
+    .controls img:hover {
         transform: translateY(-10px)
     }
 
-    .Messages{
+    .controls .record-button {
+        width: 80px;
+    }
+
+    .Messages {
         width: 80%;
         height: 85%;
         background: #182842;
         border-radius: 15px;
         padding: 40px;
+        box-shadow: rgba(0, 0, 0, 0.2) 0px 20px 30px;    
     }
 
-    .Messages .message{
+    .Messages .message {
         padding: 0;
         left: 0;
     }
 
-    .Messages h2{
+    .Messages h2 {
         color: white; 
     }
 
-    .Container{
+    .Container {
         width: 100%;
         height: 100%;
         display: flex;
         flex-direction: column;
-
+        background-color: #4D6080;
         padding: 0;
     }
 
-    .header{
+    .Container h1 {
+        text-align: center;
+    }
+
+    .header {
         width: 100%;
         height: 100vh;
         background: #00122e;
         position: relative;
     }
 
-    nav{
+    nav {
         position: absolute;
         top: 0;
         left: 0;
@@ -347,7 +375,7 @@
         padding: 10px 10px;
     }
 
-    nav .logo{
+    nav .logo {
         width: 66px;
         display: block;
         margin: auto;
@@ -356,18 +384,18 @@
         border-radius: 10px;
     }
 
-    nav ul{
+    nav ul {
         left: 0;
         margin-top: 160px;
         padding: 0;
     }
 
-    nav ul li{
+    nav ul li {
         list-style: none;
         margin: 10px;
     }
 
-    nav ul li img{
+    nav ul li .highlight {
         width: 30px;
         height: 30px;
         object-fit: cover;
@@ -377,61 +405,107 @@
         cursor: pointer;
         filter: invert(100%);
         border-radius: 10px;
-        opacity: 0.5;
+        opacity: 0.7;
         transition: opacity 0.5s, background 0.5s;
     }
 
-    nav ul li img:hover{
-        opacity: 1;
-        background: #b19e7d; 
-
-    }
-
-    .active{
+    nav ul li img:hover {
         opacity: 1;
         background: #b19e7d; 
     }
 
-    .container{
+    .active {
+        opacity: 1;
+        background: #b19e7d; 
+    }
+
+    .container {
         margin-left: 100px;
         padding: 0 2.5%;
     }
 
-    .top-icons{
-        display: flex;
-        align-items: center;
-        justify-content: flex-end;
-        padding: 25px 0;
+    .sidenav {
+        height: 100%;
+        width: 0;
+        position: fixed;
+        z-index: 1;
+        top: 0;
+        right: 0;
+        background-color: white;
+        overflow-x: hidden;
+        transition: 0.5s;
+        padding-top: 60px;
+
+        font-size: 25px;
+        color: #818181;
+        display: block;
     }
 
-    .top-icons img{
-        width: 30px;
+    .sidenav .options {
+        padding: 8px 8px 8px 32px;
+    }
+
+    .sidenav a {
+        padding: 8px 8px 8px 32px;
+        text-decoration: none;
+        font-size: 25px;
+        color: #818181;
+        display: block; 
+        transition: 0.3s;
+    }
+
+    .sidenav h3 {
+        color: #00132E;
+        text-align: center;
+
+    }
+
+    .sidenav .closebtn {
+        position: absolute;
+        top: 0;
+        right: 25px;
+        font-size: 36px;
+        margin-left: 50px;
+    }
+
+    .settings-button {
+        position: absolute;
+        font-size: 30px;
         cursor: pointer;
-        filter: invert(100%);
+        color:white;
+        right: 20px;
     }
 
-    .row-1{
+    .asl-key{
+        width: 500px;
+        height: 500px;
+    }
+
+    .nav-buttons img:active {
+        background-color: red;
+
+    }
+
+    .row-1 {
         margin-top: 15px;
         display: flex;
     }
 
-    .row-2{
+    .row-2 {
         margin-left: 20%;
         display: flex;
     }
 
-    .col-1{
+    .col-1 {
         flex-basis: 50%;
         margin-left: auto;
 
-        /* padding: 20px; */
-        /* display: flex; */
         align-items: center;
         justify-content: center;
         margin-right: 20px;
     }
 
-    .col-2{
+    .col-2 {
         flex-basis: 48%; 
     }
 
@@ -451,20 +525,19 @@
 
     .blinking-text {
         text-align: center;
-        /* margin-top: 5%; */
         font-size: 24px;
         color: #4D6080;
         animation: blink 1s infinite;
     }
 
-    .sending{
+    .sending {
         text-align: center;
-        /* margin-top: 5%; */
         font-size: 24px;
         color: #4D6080;
     }
 
-    .recordButton{
-        color:red;
+    @media screen and (max-height: 450px) {
+        .sidenav {padding-top: 15px;}
+        .sidenav a {font-size: 18px;}
     }
 </style>
