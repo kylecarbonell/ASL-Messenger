@@ -4,10 +4,7 @@ import mediapipe as mp
 import numpy as np
 from tensorflow.keras.models import load_model
 
-# Load the saved model
 model = load_model('asl.h5')
-
-# Initialize the webcam
 cap = cv2.VideoCapture(0)
 
 mp_hands = mp.solutions.hands
@@ -16,7 +13,7 @@ mp_drawing_styles = mp.solutions.drawing_styles
 
 hands = mp_hands.Hands(static_image_mode=False, min_detection_confidence=0.3)
 
-# Label dictionary for predictions
+# Alphabet Labels
 labels_dict = {0: 'A', 1: 'B', 2: 'C', 3: 'D', 4: 'E',
                5:'F', 6: 'G', 7:'H', 8:'I', 9:'J',
                10: 'K', 11: 'L', 12: 'M', 13: 'N', 14: 'O',
@@ -37,6 +34,7 @@ while True:
 
     results = hands.process(frame_rgb)
 
+    #Get landmarks for hand
     if results.multi_hand_landmarks:
         for hand_landmarks in results.multi_hand_landmarks:
             mp_drawing.draw_landmarks(
@@ -64,6 +62,7 @@ while True:
             data_input = np.array(data_aux).reshape(1, 21, 2, 1)
             print("Reshaped data_input:", data_input.shape)
 
+            #Predict character using asl.h5 model
             prediction = model.predict(data_input)
             predicted_label = np.argmax(prediction, axis=1)[0]
 
@@ -73,7 +72,7 @@ while True:
                 print(f"Predicted character: {predicted_character}")
             else:
                 print(f"Warning: Predicted label {predicted_label} not found in labels_dict")
-                predicted_character = "Unknown"  # Handle unexpected predictions
+                predicted_character = "Unknown"  
 
             # Draw the bounding box and display the predicted character
             x1 = int(min(x_) * W) - 10
@@ -92,6 +91,5 @@ while True:
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
 
-# Release resources
 cap.release()
 cv2.destroyAllWindows()
