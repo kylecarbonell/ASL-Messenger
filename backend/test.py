@@ -1,3 +1,6 @@
+'''
+    File to check test/train loss and accuracy
+'''
 import pickle
 from matplotlib import pyplot as plt
 import numpy as np
